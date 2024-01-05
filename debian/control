@@ -1,0 +1,19 @@
+Source: jwlink
+Section: devel
+Priority: optional
+Maintainer: TK Chia <tkchia@users.noreply.github.com>
+Build-Depends: debhelper (>= 9), quilt, gcc-multilib (>= 4.5),
+ libc6-dev-i386 (>= 2) | libc6-dev:i386 (>= 2), bison
+Standards-Version: 3.9.6
+Homepage: https://github.com/JWasm/JWlink
+
+Package: jwlink
+Architecture: i386 amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: x86 link editor for linking programs for various systems
+ JWlink is a linker for x86 that can create 16-, 32-, and 64-bit binaries,
+ for MS-DOS, OS/2, Windows, Linux, and other systems.  It is derived from
+ the Open Watcom Linker.
+ .
+ JWlink is released under the Sybase Open Watcom Public License, which is
+ considered an "open source" software license though not a "free" license.

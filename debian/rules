@@ -1,0 +1,42 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+ifneq "" "$(wildcard jwlink-src/GccUnix.mak)"
+    SRCDIR ?= $(abspath jwlink-src)
+    COPY_DOCS ?= true
+else
+    SRCDIR ?= $(abspath .)
+    COPY_DOCS ?= false
+endif
+DESTDIR ?= $(abspath debian/jwlink)
+PREFIX ?= /usr
+INSTALL = install -c
+export CC += -O2 -m32 -static
+
+%:
+	exec dh $@
+
+override_dh_auto_clean:
+	$(MAKE) -C '$(SRCDIR)'/dwarf/dw -f GccUnix.mak clean
+	$(MAKE) -C '$(SRCDIR)'/orl -f GccUnix.mak clean
+	$(MAKE) -C '$(SRCDIR)'/sdk/rc/wres -f GccUnix.mak clean
+	$(MAKE) -C '$(SRCDIR)' -f GccUnix.mak clean
+
+override_dh_auto_configure:
+	# Take this chance to copy out the documentation files...
+	if $(COPY_DOCS); \
+		then cp -a '$(SRCDIR)'/Readme.txt '$(SRCDIR)'/History.txt \
+			   '$(SRCDIR)'/License.txt .; fi
+
+override_dh_auto_build:
+	$(MAKE) -C '$(SRCDIR)'/dwarf/dw -f GccUnix.mak
+	$(MAKE) -C '$(SRCDIR)'/orl -f GccUnix.mak
+	$(MAKE) -C '$(SRCDIR)'/sdk/rc/wres -f GccUnix.mak
+	$(MAKE) -C '$(SRCDIR)' -f GccUnix.mak
+
+override_dh_auto_test:
+	# Unimplemented.
+
+override_dh_auto_install:
+	$(INSTALL) -d '$(DESTDIR)$(PREFIX)'/bin
+	$(INSTALL) '$(SRCDIR)'/GccUnixR/jwlink '$(DESTDIR)$(PREFIX)'/bin
